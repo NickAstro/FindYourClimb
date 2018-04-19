@@ -1,0 +1,15 @@
+<% include partials/header %>
+
+<h1>Add a new climbing gym or location</h1>
+<a href="/locations">Return to location page</a>
+
+<form action="/locations" method="POST">
+    <input type="text" name="name" placeholder="Gym or location name">
+    <input type="text" name="image" placeholder="url to photo">
+    <button>Submit Gym</button>
+    
+</form>
+
+
+
+<% include partials/footer %>
