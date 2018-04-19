@@ -1,0 +1,11 @@
+<h1>Locations page</h1>
+
+<% locations.forEach(function(location) { %>
+    <div>
+        <h3><%= location.name %></h3>
+        <img src="<%= location.image %>"></img>
+    </div>
+<% }); %>
+
+
+<a href="/">Go Home</a>

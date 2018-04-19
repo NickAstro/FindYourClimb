@@ -1,0 +1,23 @@
+{
+  "name": "find_your_climb",
+  "version": "1.0.0",
+  "description": "FindYourClimb v1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NickAstro/FindYourClimb.git"
+  },
+  "author": "Louie Nicastro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NickAstro/FindYourClimb/issues"
+  },
+  "homepage": "https://github.com/NickAstro/FindYourClimb#readme",
+  "dependencies": {
+    "ejs": "^2.5.9",
+    "express": "^4.16.3"
+  }
+}
