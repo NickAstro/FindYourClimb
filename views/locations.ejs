@@ -1,16 +1,34 @@
 <% include partials/header %>
 
-<h1>Locations page</h1>
-<a href="/locations/new">Click to add a new location</a>
+<div class="container">
+    <header class="jumbotron">
+      <div class="container">
+          <h1>Locations page</h1>
+          <p>User submitted climbing sites</p>
+          <p>
+              <a class="btn btn-primary btn-large" href="/locations/new">Click to add a new location</a>
+          </p>
+      </div>
+    </header>
+      
+    <div class="row text-right" style="display:flex; flex-wrap: wrap;">
 
-<% locations.forEach(function(location) { %>
-    <div>
-        <h3><%= location.name %></h3>
-        <img src="<%= location.image %>"></img>
+      <% locations.forEach(function(location) { %>
+          <div class="col-md-3 col-sm-6">
+            <div class="thumbnail">
+              <img src="<%= location.image %>"></img>
+              <div class="caption">
+                <h3><%= location.name %></h3>
+              </div>
+            </div>
+              
+          </div>
+      <% }); %>
+      
     </div>
-<% }); %>
+      
 
-
-<a href="/">Go Home</a>
+    <a href="/">Go Home</a>
+</div>
 
 <% include partials/footer %>
