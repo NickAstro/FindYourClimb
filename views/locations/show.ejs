@@ -1,21 +1,52 @@
 <% include ../partials/header %>
+<div class="container">
+    <div class="row">
+        <div class ="col-md-3">
+            <p class="lead">Find your Climb</p>
+            <div class="list-group">
+                <li class="list-group-item active">Thing 1</li>
+                <li class="list-group-item">Thing 2</li>
+                <li class="list-group-item">Thing 3</li>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="thumbnail">
+                <image class="img-responsive" src="<%= location.image %>"></image>
+                <div class="caption">
+                    <h4 class="pull-right">Price/things</h4>
+                    <h4><a><%= location.name %></a></h4>
+                    <p><%= location.description %></p>
+                </div>
+            </div>
+            <div class="well">
+                <div class="text-right">
+                    <a class="btn btn-success" href="/locations/<%= location._id %>/comments/new">Add new comment</a>
+                </div>
+                <hr>
+                <% location.comments.forEach(function(comment) { %>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong><%= comment.author %></strong> 
+                            <span class="pull-right">Some timing</span>
+                            <p>
+                                <%= comment.text %>
+                            </p>
+                        </div>
+                        
+                    </div>
+                
+                <% }) %> 
+                
+            </div>
+        </div>
+    </div>
+    
+</div>
 
-<h1>Fancy place</h1>
 
-<p><%= location.name %></p>
 
-<p><%= location.description %></p>
-<image src="<%= location.image %>"></image>
 
-<% location.comments.forEach(function(comment) { %>
-    <p>
-        <%= comment.author %> said: " <%= comment.text %> "
-    </p>
 
-<% }) %> 
 
-<p>
-    <a class="btn btn-success" href="/locations/<%= location._id %>/comments/new">Add new comment</a>
-</p>
 
 <% include ../partials/footer %>
