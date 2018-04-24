@@ -1,0 +1,21 @@
+<% include ../partials/header %>
+
+<h1>Fancy place</h1>
+
+<p><%= location.name %></p>
+
+<p><%= location.description %></p>
+<image src="<%= location.image %>"></image>
+
+<% location.comments.forEach(function(comment) { %>
+    <p>
+        <%= comment.author %> said: " <%= comment.text %> "
+    </p>
+
+<% }) %> 
+
+<p>
+    <a class="btn btn-success" href="/locations/<%= location._id %>/comments/new">Add new comment</a>
+</p>
+
+<% include ../partials/footer %>
