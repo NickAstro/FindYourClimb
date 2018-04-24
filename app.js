@@ -2,8 +2,11 @@ var express = require("express"),
     app = express(),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
+    passport = require("passport"),
+    LocalStrategy = require("passport-local"),
     Location = require("./models/location"),
     Comment = require("./models/comment"),
+    User = require("./models/user"),
     seedDB  = require("./seeds");
 
 seedDB();
@@ -11,6 +14,22 @@ mongoose.connect("mongodb://localhost/find_climb");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+
+
+//config for passport
+app.use(require("express-session")({
+    secret: "I'm hungry",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 
 app.get("/", function(req, res) {
    res.render("landing"); 
@@ -94,6 +113,28 @@ app.post("/locations/:id/comments", function(req, res) {
             });
         }
     });
+});
+
+
+//auth routes
+app.get("/register", function(req, res) {
+    res.render("register");    
+    
+});
+
+app.post("/register", function(req, res) {
+    var newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password, function(err, user){
+        if(err) {
+            console.log(err);
+            return res.render("register");
+        } else{
+            passport.authenticate("local")(req, res, function() {
+               res.redirect("/locations"); 
+            });
+            
+        }
+    });    
 });
 
 app.listen(process.env.PORT, process.env.IP, function() {
