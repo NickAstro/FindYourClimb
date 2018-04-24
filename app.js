@@ -15,7 +15,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 
-
 //config for passport
 app.use(require("express-session")({
     secret: "I'm hungry",
@@ -29,19 +28,24 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
+//check for user login/out middleware
+app.use(function(req, res, next) {
+   res.locals.currentUser = req.user;
+   next();
+});
 
 app.get("/", function(req, res) {
    res.render("landing"); 
 });
 
 app.get("/locations", function(req, res) {
+    
     //get locations
     Location.find({}, function(err, allLocations){
        if(err) {
            console.log(err);
        } else {
-           res.render("locations/index", {locations:allLocations});
+           res.render("locations/index", {locations:allLocations, currentUser: req.user});
        }
     });
 });
@@ -81,7 +85,7 @@ app.get("/locations/:id", function(req, res){
 })
 
 //comments
-app.get("/locations/:id/comments/new", function(req, res) {
+app.get("/locations/:id/comments/new", isLoggedIn, function(req, res) {
     //find location by id
     Location.findById(req.params.id, function(err, location) {
        if(err) {
@@ -93,7 +97,7 @@ app.get("/locations/:id/comments/new", function(req, res) {
    
 });
 
-app.post("/locations/:id/comments", function(req, res) {
+app.post("/locations/:id/comments", isLoggedIn, function(req, res) {
     //get location by id
     Location.findById(req.params.id, function(err, location) {
         if(err) {
@@ -136,6 +140,33 @@ app.post("/register", function(req, res) {
         }
     });    
 });
+//login form
+app.get("/login", function(req, res) {
+   res.render("login"); 
+});
+//handling login with middleware
+app.post("/login", passport.authenticate("local", 
+    {
+        successRedirect: "/locations", 
+        failureRedirect: "/login"
+    }), function(req, res) {
+});
+
+app.get("/logout", function(req,res){
+    req.logout();
+    res.redirect("/locations");
+});
+
+
+//middleware for is logged in
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    else {
+        res.redirect("/login");
+    }
+}
 
 app.listen(process.env.PORT, process.env.IP, function() {
    console.log("Server is up"); 
