@@ -14,7 +14,8 @@ var commentRoutes = require("./routes/comments"),
     indexRoutes = require("./routes/index");
 
 
-seedDB();
+// seedDB();
+
 mongoose.connect("mongodb://localhost/find_climb");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
