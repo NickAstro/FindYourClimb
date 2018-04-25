@@ -1,6 +1,9 @@
 var express = require("express");
 var router = express.Router();
 
+//it's looking for index.js in here
+var middleware = require("../middleware");
+
 var Location = require("../models/location");
 
 router.get("/", function(req, res) {
@@ -15,7 +18,7 @@ router.get("/", function(req, res) {
     });
 });
 
-router.post("/", isLoggedIn, function(req, res) {
+router.post("/", middleware.isLoggedIn, function(req, res) {
     var name = req.body.name;
     var image = req.body.image;
     var description = req.body.description;
@@ -37,7 +40,7 @@ router.post("/", isLoggedIn, function(req, res) {
 
 });
 
-router.get("/new", isLoggedIn, function(req, res) {
+router.get("/new", middleware.isLoggedIn, function(req, res) {
    res.render("locations/new"); 
    
 });
@@ -56,7 +59,7 @@ router.get("/:id", function(req, res){
 });
 
 //edit route
-router.get("/:id/edit", checkLocationOwnership, function(req, res) {
+router.get("/:id/edit", middleware.checkLocationOwnership, function(req, res) {
 
     Location.findById(req.params.id, function(err, foundLocation){
         if(err) {
@@ -68,7 +71,7 @@ router.get("/:id/edit", checkLocationOwnership, function(req, res) {
 });
 
 // update route
-router.put("/:id", checkLocationOwnership, function(req, res){
+router.put("/:id", middleware.checkLocationOwnership, function(req, res){
    //find and update
    Location.findByIdAndUpdate(req.params.id, req.body.location, function(err, updatedLoc){
         if(err) {
@@ -83,7 +86,7 @@ router.put("/:id", checkLocationOwnership, function(req, res){
 
 
 //destroy route
-router.delete("/:id", checkLocationOwnership, function(req, res) {
+router.delete("/:id", middleware.checkLocationOwnership, function(req, res) {
     Location.findByIdAndRemove(req.params.id, function(err){
         if(err){
             res.redirect("/locations");
@@ -94,34 +97,8 @@ router.delete("/:id", checkLocationOwnership, function(req, res) {
         
 });
 
-//middleware for is logged in
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()) {
-        return next();
-    }
-    else {
-        res.redirect("/login");
-    }
-}
 
-function checkLocationOwnership(req, res, next) {
-    //ensure authorized user allowed to edit
-    if(req.isAuthenticated()){
-        Location.findById(req.params.id, function(err, foundLocation){
-            if(err) {
-                res.redirect("back");
-            } else {
-                //check if they own location.
-                if(foundLocation.author.id.equals(req.user._id)) {
-                    next(); 
-                } else {
-                    res.redirect("back");
-                }
-            }
-        });
-    } else {
-        res.redirect("back");
-    }
-}
+
+
 
 module.exports = router;
