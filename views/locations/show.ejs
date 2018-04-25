@@ -17,6 +17,9 @@
                     <h4><a><%= location.name %></a></h4>
                     <p><%= location.description %></p>
                     <a class="btn btn-warning" href="/locations/<%= location._id %>/edit">Edit</a>
+                    <form action="/locations/<%= location._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
             <div class="well">
