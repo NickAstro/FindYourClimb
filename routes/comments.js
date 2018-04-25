@@ -19,6 +19,7 @@ router.get("/new", isLoggedIn, function(req, res) {
    
 });
 
+//create comment
 router.post("/", isLoggedIn, function(req, res) {
     //get location by id
     Location.findById(req.params.id, function(err, location) {
@@ -33,7 +34,7 @@ router.post("/", isLoggedIn, function(req, res) {
                } 
                else {
                    //add username and id to comment
-                   comment.author.id = req.user_id;
+                   comment.author.id = req.user._id;
                    comment.author.username = req.user.username;
                    comment.save();
                    location.comments.push(comment);
@@ -44,6 +45,64 @@ router.post("/", isLoggedIn, function(req, res) {
         }
     });
 });
+
+//edit comments
+router.get("/:comment_id/edit", checkCommentOwnership, function(req, res) {
+    var location_id = req.params.id;
+    Comment.findById(req.params.comment_id, function(err, foundComment){
+        if(err) {
+            res.redirect("back");    
+        } else {
+            res.render("comments/edit", {location_id: location_id, comment: foundComment});
+        }
+    });
+    
+});
+
+//update route for comments
+router.put("/:comment_id", checkCommentOwnership, function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+        if(err) {
+            res.redirect("back");
+        } else {
+            res.redirect("/locations/" + req.params.id);
+        }
+    });  
+});
+
+//Destroy comment route
+router.delete("/:comment_id", checkCommentOwnership, function(req, res){
+   //find and remove 
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err) {
+            res.redirect("back");
+        }else{
+            res.redirect("/locations/" + req.params.id);
+        }
+    })
+});
+
+
+function checkCommentOwnership(req, res, next) {
+    //ensure authorized user allowed to edit
+    if(req.isAuthenticated()){
+        Comment.findById(req.params.comment_id, function(err, foundComment){
+            if(err) {
+                res.redirect("back");
+            } else {
+                //check if they own comment.
+                if(foundComment.author.id.equals(req.user._id)) {
+                    next(); 
+                } else {
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        res.redirect("back");
+    }
+}
+
 
 //middleware for is logged in
 function isLoggedIn(req, res, next){
