@@ -41,6 +41,7 @@ router.post("/", middleware.isLoggedIn, function(req, res) {
                    comment.save();
                    location.comments.push(comment);
                    location.save();
+                   req.flash("success", "Successfully added a comment");
                    res.redirect("/locations/" + location._id);
                }
             });
@@ -79,6 +80,7 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, re
         if(err) {
             res.redirect("back");
         }else{
+            req.flash("success", "Comment removed");
             res.redirect("/locations/" + req.params.id);
         }
     })
