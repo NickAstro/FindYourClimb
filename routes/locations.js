@@ -56,19 +56,19 @@ router.get("/:id", function(req, res){
 });
 
 //edit route
-router.get("/:id/edit", function(req, res) {
+router.get("/:id/edit", checkLocationOwnership, function(req, res) {
+
     Location.findById(req.params.id, function(err, foundLocation){
         if(err) {
-            res.redirect("/location");
+            res.redirect("/locations");
         } else {
-               res.render("locations/edit", {location: foundLocation}); 
+            res.render("locations/edit", {location: foundLocation}); 
         }
     });
-
 });
 
 // update route
-router.put("/:id", function(req, res){
+router.put("/:id", checkLocationOwnership, function(req, res){
    //find and update
    Location.findByIdAndUpdate(req.params.id, req.body.location, function(err, updatedLoc){
         if(err) {
@@ -83,7 +83,7 @@ router.put("/:id", function(req, res){
 
 
 //destroy route
-router.delete("/:id", function(req, res) {
+router.delete("/:id", checkLocationOwnership, function(req, res) {
     Location.findByIdAndRemove(req.params.id, function(err){
         if(err){
             res.redirect("/locations");
@@ -101,6 +101,26 @@ function isLoggedIn(req, res, next){
     }
     else {
         res.redirect("/login");
+    }
+}
+
+function checkLocationOwnership(req, res, next) {
+    //ensure authorized user allowed to edit
+    if(req.isAuthenticated()){
+        Location.findById(req.params.id, function(err, foundLocation){
+            if(err) {
+                res.redirect("back");
+            } else {
+                //check if they own location.
+                if(foundLocation.author.id.equals(req.user._id)) {
+                    next(); 
+                } else {
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        res.redirect("back");
     }
 }
 

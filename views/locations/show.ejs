@@ -16,10 +16,15 @@
                     <h4 class="pull-right">Submitted by <%= location.author.username %></h4>
                     <h4><a><%= location.name %></a></h4>
                     <p><%= location.description %></p>
-                    <a class="btn btn-warning" href="/locations/<%= location._id %>/edit">Edit</a>
-                    <form action="/locations/<%= location._id %>?_method=DELETE" method="POST">
-                        <button class="btn btn-danger">Delete</button>
-                    </form>
+                    
+                    <% if(currentUser && location.author.id.equals(currentUser._id)) { %>
+                        <a class="btn btn-warning" href="/locations/<%= location._id %>/edit">Edit</a>
+                        <form id="delete-form" action="/locations/<%= location._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                    <% }; %>
+                    
+                    
                 </div>
             </div>
             <div class="well">
