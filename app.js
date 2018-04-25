@@ -3,6 +3,7 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     passport = require("passport"),
+    methodOverride = require("method-override"),
     LocalStrategy = require("passport-local"),
     Location = require("./models/location"),
     Comment = require("./models/comment"),
@@ -20,6 +21,7 @@ mongoose.connect("mongodb://localhost/find_climb");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 
 //config for passport
 app.use(require("express-session")({

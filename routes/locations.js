@@ -55,6 +55,33 @@ router.get("/:id", function(req, res){
     
 });
 
+//edit route
+router.get("/:id/edit", function(req, res) {
+    Location.findById(req.params.id, function(err, foundLocation){
+        if(err) {
+            res.redirect("/location");
+        } else {
+               res.render("locations/edit", {location: foundLocation}); 
+        }
+    });
+
+});
+
+// update route
+router.put("/:id", function(req, res){
+   //find and update
+   Location.findByIdAndUpdate(req.params.id, req.body.location, function(err, updatedLoc){
+        if(err) {
+            res.redirect("/locations");
+        } else {
+            //redirect
+            res.redirect("/locations/" + req.params.id);
+        }
+   });
+   
+});
+
+
 //middleware for is logged in
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()) {
